@@ -68,11 +68,20 @@ if (has_capability('mod/feedback:viewreports', $context)) {
         $analysisurl = new moodle_url('/mod/feedback/analysis_course.php', $urlparams);
     } else {
         $analysisurl = new moodle_url('/mod/feedback/analysis.php', $urlparams);
-        $analysiscampuswiseurl = new moodle_url('/mod/feedback/analysiscampuswise.php', $urlparams + ['do_show' => 'campus']);
-           }
+                $analysiscampuswiseurl = new moodle_url('/mod/feedback/analysiscampuswise.php', $urlparams + ['do_show' => 'campus']);
+    
+    }
     $row[] = new tabobject('analysis', $analysisurl->out(), get_string('analysis', 'feedback'));
 
-    $row[] = new tabobject('analysiscampuswise', $analysiscampuswiseurl->out(), 'Campus Analysis');
+   
+    $currentuser_sql = "SELECT institution FROM {user} WHERE id=" . $USER->id;
+    $currentuser_arr = $DB->get_record_sql($currentuser_sql);
+
+    $currentuserinstitution_str=$currentuser_arr->institution;
+    if (trim($currentuserinstitution_str)!="") {
+        $row[] = new tabobject('analysiscampuswise', $analysiscampuswiseurl->out(), 'Campus Analysis');
+    }
+  
 
     $reporturl = new moodle_url('/mod/feedback/show_entries.php', $urlparams);
     $row[] = new tabobject('showentries',
